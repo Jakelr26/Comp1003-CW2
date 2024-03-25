@@ -1,0 +1,14 @@
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\bin\Debug\net6.0\BinarySearchTree.exe
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\bin\Debug\net6.0\BinarySearchTree.deps.json
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\bin\Debug\net6.0\BinarySearchTree.runtimeconfig.json
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\bin\Debug\net6.0\BinarySearchTree.dll
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\bin\Debug\net6.0\BinarySearchTree.pdb
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.GeneratedMSBuildEditorConfig.editorconfig
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.AssemblyInfoInputs.cache
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.AssemblyInfo.cs
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.csproj.CoreCompileInputs.cache
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.dll
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\refint\BinarySearchTree.dll
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.pdb
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\BinarySearchTree.genruntimeconfig.cache
+C:\Git Hub\Comp1003-CW2\BinarySearchTree\obj\Debug\net6.0\ref\BinarySearchTree.dll
