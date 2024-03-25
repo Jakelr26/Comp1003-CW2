@@ -113,12 +113,24 @@ class Program
     static bool IsEqual(Node item1, Node item2)
     {
         //  Fill in proper code in this method stub
-        if (item2 == null || item1 == null)
+        if (item1.data == null && item2.data == null)
+        {
+            return true;
+        }
+        else if (item2.data == null || item1.data == null)
         {
             return false;
         }
-        if (item2.data != item1.data) return false;
-        else return true;
+
+        if (item2.data == item1.data)
+        {
+            return true;
+        }
+        else 
+        { 
+            return false;
+        }
+
 
     }
 
@@ -175,6 +187,8 @@ class Program
     /// <param name="tree">The root node of the Tree.</param>
     /// <param name="value">The Data to find</param>
     /// <returns>True if the value is found and false otherwise.</returns>
+
+    
     static bool SearchTree(Node tree, DataEntry value)
     {
         //  Fill in proper code
@@ -182,38 +196,46 @@ class Program
         Node valueNode = new Node(); 
         valueNode.data = value;
 
-        if (IsEqual(valueNode, tree))
+        if (IsEqual(tree, valueNode))
         {
             return true;
         }
 
+
         if (IsSmaller(tree, valueNode))
         {
-            if (tree.left != null)
+            if (tree.right == null)
             {
-                SearchTree(tree.left, value);
-            } else return false;
+                return false;
+            }
+            else 
+            {
+                return SearchTree(tree.right, value);
+            }
 
         }
 
         if (IsSmaller(valueNode, tree))
         {
-            //SearchTree(tree.right, value);
 
-            if (tree.right != null)
+            if (tree.left == null)
             {
-                SearchTree(tree.right, value);
+                return false;
             }
-            else return false;
+            else 
+            {
+                return SearchTree(tree.left, value);
+
+            }
+
+
         }
 
-
-        
-        
-
-
-        return false; // replace?
+        return true; 
     }
+    
+
+
 
 
     /// <summary>
