@@ -1,5 +1,6 @@
 
 using System;   // Don't use anything else than System and only use C-core functionality; read the specs!
+using System.Security.Cryptography.X509Certificates;
 
 /// <summary>
 /// Implement a binary search tree 
@@ -248,9 +249,44 @@ class Program
     /// <returns>True if the Node is found, false otherwise.</returns>
     static bool SearchTreeItem(Node tree, Node item)
     {
-        //  Fill in proper code 
 
-        return false; // replace?
+        if (tree == null || item == null)
+        {
+            return false;
+        }
+
+        if (IsEqual(tree, item))
+        {
+            return true;
+        }else
+        {
+            if (IsSmaller(tree, item))
+            {
+                if (tree.right == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return SearchTreeItem(tree.right, item);
+                }
+            }
+            if (!IsSmaller(tree, item))
+            {
+                if (tree.left == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return SearchTreeItem(tree.left, item);
+
+                }
+            }
+        }
+
+        return false;
+
     }
 
 
@@ -261,7 +297,57 @@ class Program
     /// <param name="item">The Node to remove</param>
     static void DeleteItem(Tree tree, Node item)
     {
-        //  Fill in proper code 
+        //  Fill in proper code
+        if (tree.root == null || item == null)
+        {
+            return;
+        }
+
+        while (tree.root != item)
+        {
+            if (IsSmaller(tree.root, item))
+            {
+                while (IsSmaller(tree.root, item))
+                {
+                    tree.root = tree.root.left;
+                }
+            }
+            if (IsSmaller(item, tree.root))
+            {
+                while (IsSmaller (item, tree.root))
+                {
+                    tree.root = tree.root.right;
+                }
+            }
+        }
+        if (IsEqual(tree.root, item))
+        {
+            if (tree.root.left == null && tree.root.right == null)
+            {
+                tree.root = null;
+                return;
+            }
+            else if (tree.root.left != null && tree.root.right != null)
+            {
+                tree.root = tree.root.left;
+                tree.root.left = null;
+                return;
+            }
+            else if (tree.root.left == null)
+            {
+                tree.root = tree.root.right;
+                tree.root.right = null;
+                return;
+            }
+            else if (tree.root.right == null)
+            {
+                tree.root = tree.root.left;
+                tree.root.left = null;
+                return;
+            }
+        }
+
+
     }
 
 
@@ -272,21 +358,49 @@ class Program
     /// <returns>The number of items in the tree.</returns>
     static int Size(Tree tree)
     {
-        //  Fill in proper code 
 
-        return 0;
+        if (tree.root == null)
+        { return 0; }
+
+        Tree Left = new Tree();
+        Left.root = tree.root.left;
+
+        Tree Right = new Tree();       
+        Right.root = tree.root.right;
+
+        if (tree != null)
+        { return 1 + Size(Left) + Size(Right); }
+        else
+        { return 0; }
+
+
     }
 
-
-    /// <summary>
-    /// Returns the depth of a tree with root "tree"
-    /// 
-    /// Note that this function should work for any non-empty subtree
-    /// </summary>
-    /// <param name="tree">The root of the tree</param>
-    /// <returns>The depth of the tree.</returns>
-    static int Depth(Node tree)
+        /// <summary>
+        /// Returns the depth of a tree with root "tree"
+        /// 
+        /// Note that this function should work for any non-empty subtree
+        /// </summary>
+        /// <param name="tree">The root of the tree</param>
+        /// <returns>The depth of the tree.</returns>
+        static int Depth(Node tree)
     {
+        if (tree != null) 
+        {
+            if (tree.left != null)
+            {
+                Depth (tree.left);
+            }
+            if (tree.right != null)
+            {
+                Depth (tree.right);
+            }
+        } 
+        else { return 0; }
+
+        if (tree.left == null && tree.right == null) 
+        { return 1; }
+
 
         return 0;
     }
@@ -435,7 +549,8 @@ class Program
 
 
         //  Add more tree testing here .... 
-
+        
+        Console.WriteLine("Size of/ Number of elements in Tree: " + (Size(tree)));
 
 
     }
