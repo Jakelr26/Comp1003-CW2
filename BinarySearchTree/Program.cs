@@ -1,5 +1,6 @@
 
 using System;   // Don't use anything else than System and only use C-core functionality; read the specs!
+using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 
 /// <summary>
@@ -385,24 +386,30 @@ class Program
         /// <returns>The depth of the tree.</returns>
         static int Depth(Node tree)
     {
+
         if (tree != null) 
         {
-            if (tree.left != null)
+         
+            int leftDepth = Depth(tree.left);
+
+            int rightDepth = Depth(tree.right);
+            
+            if (leftDepth > rightDepth)
             {
-                Depth (tree.left);
-            }
-            if (tree.right != null)
+                return 1 + leftDepth;
+            } 
+            else
             {
-                Depth (tree.right);
+                return 1 + rightDepth;
             }
+
+
         } 
         else { return 0; }
 
-        if (tree.left == null && tree.right == null) 
-        { return 1; }
+        
 
-
-        return 0;
+       
     }
 
 
@@ -414,6 +421,51 @@ class Program
     /// <returns>The parent of node in the tree, or null if node has no parent.</returns>
     static Node Parent(Tree tree, Node node)
     {
+        
+        if (tree.root == null || node == null)
+        { return null; }
+
+        Tree Left = new Tree();
+        Left.root = tree.root.left;
+        Tree Right = new Tree();
+        Right.root = tree.root.right;
+
+
+        if (Left.root == null && Right.root == null)
+        {
+            return null;
+        }
+        if (Right.root != null)
+        {
+            if (Right.root.data.data == node.data.data)
+            {
+                return tree.root;
+            }
+        }
+        if (Left.root != null)
+        {
+            if (Left.root.data.data == node.data.data)
+            {
+                return tree.root;
+            }
+        }
+     
+        
+        
+
+        if (tree != null)
+        {
+            if (node.data.data > tree.root.data.data)
+            {
+                return Parent(Right, node);
+
+            }
+            if (tree.root.data.data > node.data.data)
+            {
+                return Parent(Left, node);
+            }
+        }
+
 
         return null;
     }
@@ -551,7 +603,28 @@ class Program
         //  Add more tree testing here .... 
         
         Console.WriteLine("Size of/ Number of elements in Tree: " + (Size(tree)));
+        Console.WriteLine("depth of the tree is: " + Depth(tree.root));
 
+        Node parentNode = new Node();
+        parentNode.data = data;
+        for (int i = 0; i < 10; i++)
+        {
+            parentNode.data.data = i;
+            if ((Parent(tree, parentNode) != null))
+            {
+                Console.WriteLine("the parent of node " + parentNode.data.data + " is: " + (Parent(tree, parentNode).data.data));
+                Console.WriteLine("");
+            }
+            else
+            {
+                Console.WriteLine("No parent found for " + parentNode.data.data);
+                continue;
+            }
+            
+            
+
+
+        }
 
     }
 
