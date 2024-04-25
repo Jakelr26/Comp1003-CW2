@@ -59,7 +59,39 @@ class Program
 
 
     /// Your methods go here  .... (and nowhere else)
+    /// 
+    static void InsertItem2(ref Node placeHold, Node current)
+    {
+        if (placeHold == null)                           // if tree Node is empty, make item the tree's Node
+        {
+            placeHold = current;
+            return;
+        }
 
+        if (IsSmaller(current, placeHold))                  // if item data is smaller than tree's data
+        {
+            InsertItem(ref placeHold.left, current);        //     recursively insert into the left subtree
+        }
+        else if (IsSmaller(placeHold, current))             // if item data is larger than tree's data
+        {
+            InsertItem(ref placeHold.right, current);       //     recursively insert into the right subtree
+        }
+    }
+    static void CopyTree(Node placeholderRoot, ref Node copiedRoot)
+    {
+        if (placeholderRoot == null)
+        {
+            copiedRoot = null;
+            return;
+        }
+
+        copiedRoot = new Node();
+        copiedRoot.data = placeholderRoot.data;
+
+        CopyTree(placeholderRoot.left, ref copiedRoot.left);
+
+        CopyTree(placeholderRoot.right, ref copiedRoot.right);
+    }
 
     /// THAT LINE: If you want to add methods add them between THIS LINE and THAT LINE
 
@@ -303,25 +335,65 @@ class Program
         {
             return;
         }
+        Tree placeHold = new Tree();
 
-        while (tree.root != item)
+
+        while (tree.root.data.data != item.data.data)
         {
-            if (IsSmaller(tree.root, item))
+            if (tree.root.data.data > item.data.data)
             {
-                while (IsSmaller(tree.root, item) && (tree.root != item))
+                while ((tree.root.data.data > item.data.data) && (tree.root.data.data != item.data.data) && (tree.root.left != null))
                 {
                     tree.root = tree.root.left;
+
+                    DataEntry data = new DataEntry();
+                    data.data = tree.root.data.data;
+                    Node current = new Node();
+                    current.left = null;
+                    current.right = null;
+                    current.data = data;
+
+                    InsertItem2(ref placeHold.root, current);
+
+
                 }
             }
-            if (IsSmaller(item, tree.root))
+            if (item.data.data > tree.root.data.data)
             {
-                while (IsSmaller (item, tree.root) && (tree.root != item))
+                while ((item.data.data > tree.root.data.data) && (tree.root.data.data != item.data.data) && (tree.root.right != null))
                 {
                     tree.root = tree.root.right;
+
+                    DataEntry data = new DataEntry();
+                    data.data = tree.root.data.data;
+                    Node current = new Node();
+                    current.left = null;
+                    current.right = null;
+                    current.data = data;
+
+                   InsertItem2(ref placeHold.root, current);
                 }
             }
         }
-        if (IsEqual(tree.root, item))
+        CopyTree(placeHold.root, ref tree.root);
+
+
+        /*for (int i = 1; i <= 10; i++)
+        {
+            DataEntry data = new DataEntry();
+            data.data = placeHold.root.data.data;
+
+            Node current = new Node();
+            current.left = null;
+            current.right = null;
+            current.data = data;
+
+            InsertItem(ref tree.root, current);
+            // InsertTree(tree, current);
+
+        }*/
+
+        if (tree.root.data.data == item.data.data)
         {
             if (tree.root.left == null && tree.root.right == null)
             {
@@ -346,6 +418,7 @@ class Program
                 tree.root.left = null;
                 return;
             }
+
         }
 
 
