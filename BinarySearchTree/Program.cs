@@ -308,14 +308,14 @@ class Program
         {
             if (IsSmaller(tree.root, item))
             {
-                while (IsSmaller(tree.root, item))
+                while (IsSmaller(tree.root, item) && (tree.root != item))
                 {
                     tree.root = tree.root.left;
                 }
             }
             if (IsSmaller(item, tree.root))
             {
-                while (IsSmaller (item, tree.root))
+                while (IsSmaller (item, tree.root) && (tree.root != item))
                 {
                     tree.root = tree.root.right;
                 }
@@ -478,7 +478,20 @@ class Program
     /// <returns>The Node that contains the largest value in the sub-tree provided.</returns>
     static Node FindMax(Node tree)
     {
-        return null;
+        if (tree!= null)
+        {
+
+            while (tree.right != null)
+            {
+                tree = tree.right;
+            }
+            return tree;
+            
+        } else
+        {
+            return null;
+        }
+                    
     }
 
 
@@ -488,7 +501,17 @@ class Program
     /// <param name="tree">The Tree to process.</param>
     static void DeleteMin(Tree tree)
     {
+        if (tree != null)
+        {
+            while (tree.root.left != null)
+            {
+                tree.root = tree.root.left;
+            }
+            Console.WriteLine("*************DeleteMinimumValue*************");
+            Console.WriteLine("Deleting minumum value, of number: " + tree.root.data.data);
+            tree.root = null;
 
+        }
     }
 
 
@@ -590,7 +613,8 @@ class Program
         // test SearchTree
 
         Console.WriteLine("Search for 10 random values");
-
+        Console.WriteLine("");
+        Console.WriteLine("*************FindingElement*************");
         data = new DataEntry();
         for (int i = 0; i < 10; i++)
         {
@@ -601,12 +625,20 @@ class Program
 
 
         //  Add more tree testing here .... 
-        
+        Console.WriteLine("");
+        Console.WriteLine("*************Size*************");
         Console.WriteLine("Size of/ Number of elements in Tree: " + (Size(tree)));
+        Console.WriteLine("");
+        Console.WriteLine("*************Depth*************");
         Console.WriteLine("depth of the tree is: " + Depth(tree.root));
-
+        Console.WriteLine("");
+        Console.WriteLine("*************ParentNodes*************");
         Node parentNode = new Node();
         parentNode.data = data;
+
+        Console.WriteLine("Top of tree = " + tree.root.data.data);
+        DataEntry DoesntExist = new DataEntry();
+        
         for (int i = 0; i < 10; i++)
         {
             parentNode.data.data = i;
@@ -615,17 +647,28 @@ class Program
                 Console.WriteLine("the parent of node " + parentNode.data.data + " is: " + (Parent(tree, parentNode).data.data));
                 Console.WriteLine("");
             }
-            else
-            {
-                Console.WriteLine("No parent found for " + parentNode.data.data);
-                continue;
-            }
-            
-            
-
-
         }
+        Console.WriteLine("");
+        Console.WriteLine("*************LargestNode*************");
+        Node maxNode = FindMax(tree.root);
+        Console.WriteLine("The largest node is " + maxNode.data.data);
 
+
+        data = new DataEntry();
+        data.data = r.Next(10);
+        Node nodeDelete = new Node();
+        nodeDelete.data = data;
+        Console.WriteLine("deleting node with value: " + nodeDelete.data.data);
+        DeleteItem(tree, nodeDelete);
+        Console.WriteLine("Print out the (new) tree");
+        PrintTree(tree.root);
+        Console.WriteLine();
+        /*
+        DeleteMin(tree);
+        Console.WriteLine("Print out the (new) tree");
+        PrintTree(tree.root);
+        Console.WriteLine();
+        */
     }
 
 
@@ -647,7 +690,6 @@ class Program
     static void Main()
     {
         TreeTests();
-
         SetTests();
     }
 
