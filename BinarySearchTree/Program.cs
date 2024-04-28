@@ -1,7 +1,9 @@
 
 using System;   // Don't use anything else than System and only use C-core functionality; read the specs!
+using System.ComponentModel.Design.Serialization;
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
 
 /// <summary>
 /// Implement a binary search tree 
@@ -56,42 +58,176 @@ class Program
 {
 
     /// THIS LINE: If you want to add methods add them between THIS LINE and THAT LINE
+    static bool NegativeSearchTree(Node tree, DataEntry value)
+    {
+        //  Fill in proper code
+
+        Node valueNode = new Node();
+        valueNode.data = value;
+
+        if (IsEqual(tree, valueNode))
+        {
+            return false;
+        }
+
+
+        if (IsSmaller(tree, valueNode))
+        {
+            if (tree.right == null)
+            {
+                return true;
+            }
+            else
+            {
+                return SearchTree(tree.right, value);
+            }
+
+        }
+
+        if (IsSmaller(valueNode, tree))
+        {
+
+            if (tree.left == null)
+            {
+                return true;
+            }
+            else
+            {
+                return SearchTree(tree.left, value);
+
+            }
+
+
+        }
+
+        return false;
+    }
 
 
     /// Your methods go here  .... (and nowhere else)
     /// 
-    static void InsertItem2(ref Node placeHold, Node current)
+
+    static Node DeleteItemPart(Node root, Node item)
     {
-        if (placeHold == null)                           // if tree Node is empty, make item the tree's Node
+        if (root != null)
         {
-            placeHold = current;
+            if (item.data.data < root.data.data)
+            {   
+                root.left = DeleteItemPart(root.left, item);
+
+            }else if (item.data.data > root.data.data)
+            {   
+                root.right = DeleteItemPart(root.right, item);
+
+            }else
+            {
+                // 1 or none kid
+                if (root.left == null)
+                {
+                    return root.right;
+
+                }else if (root.right == null)
+                {
+                    return root.left;
+                }
+                Node TwoChildReplace = root.right;
+                while (TwoChildReplace.left != null)
+                {
+                    TwoChildReplace = TwoChildReplace.left;
+                }
+                root.data = TwoChildReplace.data;
+                root.right = DeleteItemPart(root.right, TwoChildReplace);
+
+            }
+            return root;
+        }
+        return null;
+
+
+
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="Union">where the compiled list is stored</param>
+    /// <param name="InTree">ofiginal tree</param>
+    static void treeMerger(Tree Union, Node InTree)
+    {
+        
+        if (InTree == null)
+        {
             return;
         }
+        else
+        {
+            Node ValueIn = new Node();
+            ValueIn.data = InTree.data;
+            InsertItem(ref Union.root, ValueIn);
 
-        if (IsSmaller(current, placeHold))                  // if item data is smaller than tree's data
-        {
-            InsertItem(ref placeHold.left, current);        //     recursively insert into the left subtree
+            if (InTree.left != null)
+            {
+                treeMerger(Union, InTree.left);
+            }
+            if (InTree.right != null)
+            {
+                treeMerger(Union, InTree.right);
+            }
         }
-        else if (IsSmaller(placeHold, current))             // if item data is larger than tree's data
-        {
-            InsertItem(ref placeHold.right, current);       //     recursively insert into the right subtree
-        }
+
+
     }
-    static void CopyTree(Node placeholderRoot, ref Node copiedRoot)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="direcion"></param>
+    /// <param name="tree"></param>
+    /// <param name="treeUnion"></param>
+    static void Intersect(Node direcionallroot, Node root , Tree treeUnion, Tree results)
     {
-        if (placeholderRoot == null)
+        if (direcionallroot == null)
         {
-            copiedRoot = null;
             return;
         }
-
-        copiedRoot = new Node();
-        copiedRoot.data = placeholderRoot.data;
-
-        CopyTree(placeholderRoot.left, ref copiedRoot.left);
-
-        CopyTree(placeholderRoot.right, ref copiedRoot.right);
+        else
+        {
+            if (SearchTree(root, direcionallroot.data))
+            {
+                Node partofIntersect = new Node();
+                partofIntersect.data = direcionallroot.data ;
+                InsertTree(results, partofIntersect);
+            }
+            if (direcionallroot.left != null)
+            {
+                Intersect(direcionallroot.left, root, treeUnion, results);
+            }
+            if (direcionallroot.right != null)
+            {
+                Intersect(direcionallroot.right, root, treeUnion, results);
+            }
+            
+        }
     }
+    
+    static void TreeDiff(Node direcionallroot, Node intersect, Tree results)
+    {
+        if (direcionallroot != null && intersect != null)
+        {
+            if (SearchTree(direcionallroot, intersect.data))
+            {
+                Node partofIntersect = new Node();
+                //                InsertTree(results, direcionallroot);
+                direcionallroot = DeleteItemPart(direcionallroot, intersect);
+
+            }
+
+            TreeDiff(direcionallroot, intersect.left, results);
+
+            TreeDiff(direcionallroot, intersect.right, results);
+        }
+      
+
+    }
+
 
     /// THAT LINE: If you want to add methods add them between THIS LINE and THAT LINE
 
@@ -208,7 +344,7 @@ class Program
     /// <param name="item">The Node to insert</param>
     static void InsertTree(Tree tree, Node item)
     {
-        // ...
+        InsertItem(ref tree.root, item);
 
     }
 
@@ -222,7 +358,7 @@ class Program
     /// <param name="value">The Data to find</param>
     /// <returns>True if the value is found and false otherwise.</returns>
 
-    
+
     static bool SearchTree(Node tree, DataEntry value)
     {
         //  Fill in proper code
@@ -330,100 +466,9 @@ class Program
     /// <param name="item">The Node to remove</param>
     static void DeleteItem(Tree tree, Node item)
     {
-        //  Fill in proper code
-        if (tree.root == null || item == null)
-        {
-            return;
-        }
-        Tree placeHold = new Tree();
-
-
-        while (tree.root.data.data != item.data.data)
-        {
-            if (tree.root.data.data > item.data.data)
-            {
-                while ((tree.root.data.data > item.data.data) && (tree.root.data.data != item.data.data) && (tree.root.left != null))
-                {
-                    tree.root = tree.root.left;
-
-                    DataEntry data = new DataEntry();
-                    data.data = tree.root.data.data;
-                    Node current = new Node();
-                    current.left = null;
-                    current.right = null;
-                    current.data = data;
-
-                    InsertItem2(ref placeHold.root, current);
-
-
-                }
-            }
-            if (item.data.data > tree.root.data.data)
-            {
-                while ((item.data.data > tree.root.data.data) && (tree.root.data.data != item.data.data) && (tree.root.right != null))
-                {
-                    tree.root = tree.root.right;
-
-                    DataEntry data = new DataEntry();
-                    data.data = tree.root.data.data;
-                    Node current = new Node();
-                    current.left = null;
-                    current.right = null;
-                    current.data = data;
-
-                   InsertItem2(ref placeHold.root, current);
-                }
-            }
-        }
-        CopyTree(placeHold.root, ref tree.root);
-
-
-        /*for (int i = 1; i <= 10; i++)
-        {
-            DataEntry data = new DataEntry();
-            data.data = placeHold.root.data.data;
-
-            Node current = new Node();
-            current.left = null;
-            current.right = null;
-            current.data = data;
-
-            InsertItem(ref tree.root, current);
-            // InsertTree(tree, current);
-
-        }*/
-
-        if (tree.root.data.data == item.data.data)
-        {
-            if (tree.root.left == null && tree.root.right == null)
-            {
-                tree.root = null;
-                return;
-            }
-            else if (tree.root.left != null && tree.root.right != null)
-            {
-                tree.root = tree.root.left;
-                tree.root.left = null;
-                return;
-            }
-            else if (tree.root.left == null)
-            {
-                tree.root = tree.root.right;
-                tree.root.right = null;
-                return;
-            }
-            else if (tree.root.right == null)
-            {
-                tree.root = tree.root.left;
-                tree.root.left = null;
-                return;
-            }
-
-        }
-
-
+        tree.root = DeleteItemPart(tree.root, item);
     }
-
+    
 
     /// <summary>
     /// Returns how many elements are in a Tree
@@ -576,14 +621,27 @@ class Program
     {
         if (tree != null)
         {
-            while (tree.root.left != null)
-            {
-                tree.root = tree.root.left;
-            }
-            Console.WriteLine("*************DeleteMinimumValue*************");
-            Console.WriteLine("Deleting minumum value, of number: " + tree.root.data.data);
-            tree.root = null;
+            Node current = tree.root;
 
+            if (current.left != null)
+            {
+                while (current.left != null)
+                {
+                    current = current.left;
+                }
+            }
+
+            if (current.left == null)
+            {
+                Console.WriteLine();
+                Console.WriteLine("*************DeleteMinimumValue*************");
+                Console.WriteLine("Deleting minumum value, of number: " + current.data.data);
+
+                tree.root = DeleteItemPart(tree.root, current);
+
+
+
+            }
         }
     }
 
@@ -600,6 +658,14 @@ class Program
     /// <returns>A new tree with all the values from tree1 and tree2.</returns>
     static Tree Union(Tree tree1, Tree tree2)
     {
+        if ((tree1 != null) && (tree2 != null))
+        {
+            Tree treeUnion = new Tree();
+            treeMerger(treeUnion, tree2.root);
+            treeMerger(treeUnion, tree1.root);
+            return treeUnion;
+        }
+
         return null;
     }
 
@@ -612,7 +678,22 @@ class Program
     /// <returns>A new Tree with all values in tree1 and tree2.</returns>
     static Tree Intersection(Tree tree1, Tree tree2)
     {
-        return null;
+        if ((tree1 == null) || (tree2 == null))
+        {
+            return null;
+
+        }
+        else
+        {
+            Tree treeUnion = new Tree();
+            Tree results = new Tree();
+            treeMerger(treeUnion, tree2.root);
+            treeMerger(treeUnion, tree1.root);
+
+
+            Intersect(tree1.root,tree2.root, treeUnion, results);
+            return results;
+        }
     }
 
 
@@ -624,7 +705,28 @@ class Program
     /// <returns>The values of the set difference tree1/tree2 in a new Tree.</returns>
     static Tree Difference(Tree tree1, Node tree2)
     {
-        return null;
+        if (tree1 == null || tree2 == null)
+        {
+            return null;
+        }
+        Tree treeUnion = new Tree();
+
+        if ((tree1 != null) && (tree2 != null))
+        {
+            treeMerger(treeUnion, tree2);
+            treeMerger(treeUnion, tree1.root);
+        }
+        Tree t2 = new Tree();
+        t2.root = tree2;
+        Tree inter = Intersection(tree1, t2);
+
+        Tree results = new Tree();
+
+        TreeDiff(treeUnion.root, inter.root, results);
+
+        return treeUnion;
+
+        
     }
 
 
@@ -680,6 +782,7 @@ class Program
 
         Console.WriteLine("Print out the (ordered!) tree");
         PrintTree(tree.root);
+        Node hold = tree.root;
         Console.WriteLine();
 
 
@@ -727,21 +830,20 @@ class Program
         Console.WriteLine("The largest node is " + maxNode.data.data);
 
 
-        data = new DataEntry();
-        data.data = r.Next(10);
+
         Node nodeDelete = new Node();
-        nodeDelete.data = data;
+        nodeDelete.data = hold.data;
         Console.WriteLine("deleting node with value: " + nodeDelete.data.data);
         DeleteItem(tree, nodeDelete);
         Console.WriteLine("Print out the (new) tree");
         PrintTree(tree.root);
         Console.WriteLine();
-        /*
+        
         DeleteMin(tree);
         Console.WriteLine("Print out the (new) tree");
         PrintTree(tree.root);
         Console.WriteLine();
-        */
+        
     }
 
 
@@ -751,9 +853,74 @@ class Program
     /// </summary>
     static void SetTests()
     {
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine("****************************************************");
+        Console.WriteLine("*************         SetTests         *************");
+        Console.WriteLine("****************************************************");
 
+        //Union();
+        Tree tree1 = new Tree();
+        Tree tree2 = new Tree();
+        Random r = new Random();
+        DataEntry data;
+
+
+        // Build a tree inserting 10 random values as data
+
+        Console.WriteLine("Build two trees inserting 10 random values as data");
+
+        //make tree1
+        for (int i = 1; i <= 10; i++)
+        {
+            data = new DataEntry();
+            data.data = r.Next(10);
+            Node current = new Node();
+            current.left = null;
+            current.right = null;
+            current.data = data;
+            InsertItem(ref tree1.root, current);
+        }
+        //make tree2
+        for (int i = 1; i <= 10; i++)
+        {
+            data = new DataEntry();
+            data.data = r.Next(10);
+            Node current = new Node();
+            current.left = null;
+            current.right = null;
+            current.data = data;
+            InsertItem(ref tree2.root, current);
+        }
+        Console.WriteLine("Tree1:");
+        PrintTree(tree1.root);
+        Console.WriteLine();
+        Console.WriteLine("Tree2:");
+        PrintTree(tree2.root);
+
+
+        Console.WriteLine();
+        Console.WriteLine("Result of union:");
+        Tree uniontree = new Tree();
+        uniontree = Union(tree1, tree2);
+        PrintTree(uniontree.root);
+
+
+        Console.WriteLine();
+        Console.WriteLine("Results of intersection:");
+        Tree intersectionTree = new Tree(); 
+        intersectionTree = Intersection(tree1, tree2);
+        PrintTree(intersectionTree.root);
         //   Tests for the Set methods
 
+        Console.WriteLine();
+        Console.WriteLine("Results of Difference:");
+        Tree difftree = new Tree();
+        difftree = Difference(tree1, tree2.root);
+        PrintTree(difftree.root);
+
+        
     }
 
 
