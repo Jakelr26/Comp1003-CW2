@@ -212,20 +212,40 @@ class Program
     {
         if (direcionallroot != null && intersect != null)
         {
+            
             if (SearchTree(direcionallroot, intersect.data))
             {
                 Node partofIntersect = new Node();
-                //                InsertTree(results, direcionallroot);
                 direcionallroot = DeleteItemPart(direcionallroot, intersect);
 
             }
+            if (intersect.left != null)
+            {
+                TreeDiff(direcionallroot, intersect.left, results);
+            }
+            if (intersect.right != null)
+            {
+                TreeDiff(direcionallroot, intersect.right, results);
+            }
+        }
+        
+    }
 
-            TreeDiff(direcionallroot, intersect.left, results);
-
-            TreeDiff(direcionallroot, intersect.right, results);
+    static void NormalDifference(Node root1, Node tree2, Tree resultTree)
+    {
+        if (root1 == null)
+        {
+            return;
         }
       
-
+        if (!SearchTree(tree2, root1.data))
+        {
+            Node newNode = new Node();
+            newNode.data = root1.data;
+            InsertTree(resultTree, newNode);
+        }
+        NormalDifference(root1.left, tree2, resultTree);
+        NormalDifference(root1.right, tree2, resultTree);
     }
 
 
@@ -634,7 +654,7 @@ class Program
             if (current.left == null)
             {
                 Console.WriteLine();
-                Console.WriteLine("*************DeleteMinimumValue*************");
+                Console.WriteLine("****************DeleteMinimumValue*****************");
                 Console.WriteLine("Deleting minumum value, of number: " + current.data.data);
 
                 tree.root = DeleteItemPart(tree.root, current);
@@ -705,27 +725,13 @@ class Program
     /// <returns>The values of the set difference tree1/tree2 in a new Tree.</returns>
     static Tree Difference(Tree tree1, Node tree2)
     {
-        if (tree1 == null || tree2 == null)
+        if (tree1 != null && tree2 != null)
         {
-            return null;
+            Tree resultTree = new Tree();
+            NormalDifference(tree1.root, tree2, resultTree);
+            return resultTree;
         }
-        Tree treeUnion = new Tree();
-
-        if ((tree1 != null) && (tree2 != null))
-        {
-            treeMerger(treeUnion, tree2);
-            treeMerger(treeUnion, tree1.root);
-        }
-        Tree t2 = new Tree();
-        t2.root = tree2;
-        Tree inter = Intersection(tree1, t2);
-
-        Tree results = new Tree();
-
-        TreeDiff(treeUnion.root, inter.root, results);
-
-        return treeUnion;
-
+        else { return null; }
         
     }
 
@@ -738,7 +744,27 @@ class Program
     /// <returns>The values of the symmetric difference tree1/tree2 in a new Tree.</returns>
     static Tree SymmetricDifference(Node tree1, Tree tree2)
     {
-        return null;
+        if (tree2 == null || tree1 == null)
+        {
+            return null;
+        }
+        Tree treeUnion = new Tree();
+        Tree t2 = new Tree();
+        t2.root = tree1;
+        
+        if ((tree2 != null) && (tree1 != null))
+        {
+            treeUnion = Union(tree2, t2);
+         
+        }
+        
+        Tree inter = Intersection(tree2, t2);
+
+        Tree results = new Tree();
+
+        TreeDiff(treeUnion.root, inter.root, results);
+
+        return treeUnion;
     }
 
 
@@ -790,7 +816,7 @@ class Program
 
         Console.WriteLine("Search for 10 random values");
         Console.WriteLine("");
-        Console.WriteLine("*************FindingElement*************");
+        Console.WriteLine("*******************FindingElement*******************");
         data = new DataEntry();
         for (int i = 0; i < 10; i++)
         {
@@ -802,13 +828,13 @@ class Program
 
         //  Add more tree testing here .... 
         Console.WriteLine("");
-        Console.WriteLine("*************Size*************");
+        Console.WriteLine("**********************Size*************************");
         Console.WriteLine("Size of/ Number of elements in Tree: " + (Size(tree)));
         Console.WriteLine("");
-        Console.WriteLine("*************Depth*************");
+        Console.WriteLine("**********************Depth************************");
         Console.WriteLine("depth of the tree is: " + Depth(tree.root));
         Console.WriteLine("");
-        Console.WriteLine("*************ParentNodes*************");
+        Console.WriteLine("*******************ParentNodes*********************");
         Node parentNode = new Node();
         parentNode.data = data;
 
@@ -825,7 +851,7 @@ class Program
             }
         }
         Console.WriteLine("");
-        Console.WriteLine("*************LargestNode*************");
+        Console.WriteLine("*******************LargestNode*********************");
         Node maxNode = FindMax(tree.root);
         Console.WriteLine("The largest node is " + maxNode.data.data);
 
@@ -854,8 +880,6 @@ class Program
     static void SetTests()
     {
         Console.WriteLine();
-        Console.WriteLine();
-        Console.WriteLine();
         Console.WriteLine("****************************************************");
         Console.WriteLine("*************         SetTests         *************");
         Console.WriteLine("****************************************************");
@@ -869,7 +893,7 @@ class Program
 
         // Build a tree inserting 10 random values as data
 
-        Console.WriteLine("Build two trees inserting 10 random values as data");
+        Console.WriteLine("*Build two trees inserting 10 random values as data*");
 
         //make tree1
         for (int i = 1; i <= 10; i++)
@@ -899,28 +923,40 @@ class Program
         Console.WriteLine("Tree2:");
         PrintTree(tree2.root);
 
+        Console.WriteLine();
 
         Console.WriteLine();
-        Console.WriteLine("Result of union:");
+        Console.WriteLine("****************UnionOfTheTwoTrees*****************");
         Tree uniontree = new Tree();
         uniontree = Union(tree1, tree2);
         PrintTree(uniontree.root);
+        Console.WriteLine();
 
 
         Console.WriteLine();
-        Console.WriteLine("Results of intersection:");
+        Console.WriteLine("*************IntersectionOfTheTwoTrees*************");
         Tree intersectionTree = new Tree(); 
         intersectionTree = Intersection(tree1, tree2);
         PrintTree(intersectionTree.root);
-        //   Tests for the Set methods
+        Console.WriteLine();
+
 
         Console.WriteLine();
-        Console.WriteLine("Results of Difference:");
+        Console.WriteLine("*************SetDifferenceOfTheTwoTrees************");
         Tree difftree = new Tree();
         difftree = Difference(tree1, tree2.root);
         PrintTree(difftree.root);
+        Console.WriteLine();
 
-        
+
+        Console.WriteLine();
+        Console.WriteLine("***********SymetricDifferenceOfTheTwoTrees*********");
+        Tree sdifftree = new Tree();
+        sdifftree = SymmetricDifference(tree2.root, tree1);
+        PrintTree(sdifftree.root);
+        Console.WriteLine();
+
+
     }
 
 
